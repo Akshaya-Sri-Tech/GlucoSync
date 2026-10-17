@@ -1,0 +1,32 @@
+
+# Java compiled files
+*.class
+
+# JAR files
+*.jar
+
+# API keys and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+config/secrets.*
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# Build output
+target/
+build/
+out/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
