@@ -31,8 +31,6 @@ public class PatientLogin extends Application {
         patientId.setPromptText("Enter your patient ID");
         patientId.setPrefHeight(42);
 
-        
-
         PasswordField password = new PasswordField();
         password.setPromptText("Enter your password");
         password.setPrefHeight(42);
