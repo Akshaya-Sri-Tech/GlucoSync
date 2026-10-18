@@ -1,3 +1,4 @@
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -165,7 +166,14 @@ public class PatientLogin extends JFrame {
             showMessage("Enter a valid password.", Color.RED);
 
         } else {
-            showMessage("Login details validated!", TEAL);
+            // Open Patient Dashboard
+            PatientDashboard dashboard
+                    = new PatientDashboard(Integer.parseInt(id));
+
+            dashboard.setVisible(true);
+
+            // Close the login window
+            this.dispose();
         }
     }
 

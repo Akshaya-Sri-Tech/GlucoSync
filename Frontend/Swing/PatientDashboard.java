@@ -1,3 +1,4 @@
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -17,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 public class PatientDashboard extends JFrame {
@@ -28,12 +28,17 @@ public class PatientDashboard extends JFrame {
     private static final Color TEXT = new Color(38, 55, 70);
     private static final Color MUTED = new Color(100, 116, 139);
 
+    private final int patientId;
     private JSpinner preMeal;
     private JSpinner postMeal;
     private JLabel dateTime;
     private JLabel result;
 
-    public PatientDashboard() {
+    private JLabel riskFlag;
+    private JLabel riskDetails;
+
+    public PatientDashboard(int patientId) {
+        this.patientId = patientId;
         setTitle("GlucoSync | Patient Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(820, 800);
@@ -53,6 +58,10 @@ public class PatientDashboard extends JFrame {
         JLabel brand = new JLabel("GlucoSync");
         brand.setFont(new Font("Arial", Font.BOLD, 30));
         brand.setForeground(TEAL);
+
+        JLabel patientInfo = new JLabel("Patient ID: " + patientId);
+        patientInfo.setFont(new Font("Arial", Font.BOLD, 14));
+        patientInfo.setForeground(TEAL);
 
         JLabel heading = new JLabel("Patient Dashboard");
         heading.setFont(new Font("Arial", Font.BOLD, 23));
@@ -78,6 +87,25 @@ public class PatientDashboard extends JFrame {
         result.setFont(new Font("Arial", Font.PLAIN, 14));
         result.setForeground(TEAL);
         result.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Risk status flag
+        riskFlag = new JLabel("  Awaiting readings  ");
+        riskFlag.setFont(new Font("Arial", Font.BOLD, 15));
+        riskFlag.setOpaque(true);
+        riskFlag.setBackground(new Color(230, 230, 230));
+        riskFlag.setForeground(TEXT);
+        riskFlag.setBorder(
+                javax.swing.BorderFactory.createEmptyBorder(10, 12, 10, 12)
+        );
+        riskFlag.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Risk explanation
+        riskDetails = new JLabel(
+                "Submit your readings to view the risk status."
+        );
+        riskDetails.setFont(new Font("Arial", Font.PLAIN, 13));
+        riskDetails.setForeground(MUTED);
+        riskDetails.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JButton submit = new JButton("Submit Glucose Values");
         submit.setFont(new Font("Arial", Font.BOLD, 16));
@@ -119,8 +147,13 @@ public class PatientDashboard extends JFrame {
 
         card.add(dateTime);
         addGap(card, 22);
+    
         card.add(submit);
         addGap(card, 18);
+        card.add(riskFlag);
+        addGap(card, 8);
+        card.add(riskDetails);
+        addGap(card, 10);
         card.add(result);
 
         root.add(card);
@@ -146,8 +179,25 @@ public class PatientDashboard extends JFrame {
         return spinner;
     }
 
+    private String classifyRisk(int pre, int post) {
+        // Placeholder thresholds for testing the application.
+        boolean high = pre > 130 || post > 180;
+        boolean low = pre < 70 || post < 70;
+
+        // High takes priority if either reading is high.
+        if (high) {
+            return "HIGH";
+        }
+
+        if (low) {
+            return "LOW";
+        }
+
+        return "MODERATE";
+    }
+
     private void addField(JPanel panel, String labelText,
-                          JComponent input) {
+            JComponent input) {
         JLabel label = new JLabel(labelText);
         label.setFont(new Font("Arial", Font.BOLD, 14));
         label.setForeground(TEXT);
@@ -176,34 +226,72 @@ public class PatientDashboard extends JFrame {
                 return;
             }
 
+            // Record submission date and time.
             LocalDateTime submittedAt = LocalDateTime.now();
 
-            DateTimeFormatter formatter =
-                    DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm a");
+            DateTimeFormatter formatter
+                    = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm a");
 
             dateTime.setText(
                     "Recorded at: " + submittedAt.format(formatter)
             );
 
+            // Classify the readings.
+            String risk = classifyRisk(pre, post);
+
+            // Display a colour-coded risk flag.
+            switch (risk) {
+                case "HIGH":
+                    riskFlag.setText("  HIGH RISK  ");
+                    riskFlag.setBackground(new Color(211, 47, 47));
+                    riskFlag.setForeground(Color.WHITE);
+                    riskDetails.setText(
+                            "A reading crossed the configured high threshold."
+                    );
+                    break;
+
+                case "LOW":
+                    riskFlag.setText("  LOW RISK  ");
+                    riskFlag.setBackground(new Color(255, 213, 79));
+                    riskFlag.setForeground(new Color(70, 50, 0));
+                    riskDetails.setText(
+                            "A reading fell below the configured low threshold."
+                    );
+                    break;
+
+                default:
+                    riskFlag.setText("  MODERATE  ");
+                    riskFlag.setBackground(new Color(46, 125, 50));
+                    riskFlag.setForeground(Color.WHITE);
+                    riskDetails.setText(
+                            "Both readings are within the example target ranges."
+                    );
+                    break;
+            }
+
             result.setForeground(TEAL);
             result.setText(
                     "<html>Readings captured successfully!<br>"
+                    + "Patient ID: " + patientId + "<br>"
                     + "Pre-meal: " + pre + " mg/dL<br>"
-                    + "Post-meal: " + post + " mg/dL</html>"
+                    + "Post-meal: " + post + " mg/dL<br>"
+                    + "Risk status: " + risk + "</html>"
             );
 
-            // Next step: save readings and submittedAt to MySQL.
-
-        } catch (NumberFormatException | java.text.ParseException ex) {
+            // Later: save patientId, pre, post, submittedAt
+            // and risk to MySQL.
+        } catch (NumberFormatException
+                | java.text.ParseException ex) {
             result.setForeground(Color.RED);
-            result.setText("Please enter valid whole-number glucose readings.");
+            result.setText(
+                    "Please enter valid whole-number glucose readings."
+            );
+        } catch (IllegalArgumentException ex) {
+            result.setForeground(Color.RED);
+            result.setText(
+                    "Enter valid readings within the permitted range."
+            );
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            PatientDashboard dashboard = new PatientDashboard();
-            dashboard.setVisible(true);
-        });
-    }
 }
