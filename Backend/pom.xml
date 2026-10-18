@@ -34,6 +34,8 @@
                     <includes>
                         <include>DatabaseConnection.java</include>
                         <include>PatientDAO.java</include>
+                        <include>GlucoseDAO.java</include>
+                        <include>AppointmentDAO.java</include>
                     </includes>
                 </configuration>
             </plugin>
