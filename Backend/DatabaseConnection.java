@@ -1,4 +1,3 @@
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -6,7 +5,7 @@ import java.sql.SQLException;
 public class DatabaseConnection {
 
     private static final String URL =
-            "jdbc:mysql://localhost:3306/GlucoSync";
+            "jdbc:postgresql://aws-0-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=require";
 
     public static Connection getConnection() throws SQLException {
         String user = System.getenv("GLUCOSYNC_DB_USER");
@@ -23,10 +22,11 @@ public class DatabaseConnection {
 
     public static void main(String[] args) {
         try (Connection connection = getConnection()) {
-            System.out.println("SUCCESS: Connected to GlucoSync!");
+            System.out.println("SUCCESS: Connected to GlucoSync Supabase!");
             System.out.println("Database: " + connection.getCatalog());
+            System.out.println("Database type: PostgreSQL");
         } catch (SQLException e) {
-            System.out.println("FAILED: Could not connect to MySQL.");
+            System.out.println("FAILED: Could not connect to Supabase.");
             System.out.println("Reason: " + e.getMessage());
         }
     }
