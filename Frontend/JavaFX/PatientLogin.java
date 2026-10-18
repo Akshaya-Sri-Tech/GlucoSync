@@ -32,9 +32,7 @@ public class PatientLogin extends Application {
         patientId.setPromptText("Enter your patient ID");
         patientId.setPrefHeight(42);
 
-        TextField email = new TextField();
-        email.setPromptText("Enter your email");
-        email.setPrefHeight(42);
+        
 
         PasswordField password = new PasswordField();
         password.setPromptText("Enter your password");
@@ -55,7 +53,6 @@ public class PatientLogin extends Application {
 
         login.setOnAction(e -> {
             if (patientId.getText().isBlank()
-                    || email.getText().isBlank()
                     || password.getText().isBlank()) {
 
                 message.setText("Please fill in all fields.");
@@ -66,10 +63,9 @@ public class PatientLogin extends Application {
                 message.setText("Enter a valid Patient ID.");
                 message.setTextFill(Color.RED);
 
-            } else if (!email.getText().matches(
-                    "^[\\w.+-]+@[\\w.-]+\\.[A-Za-z]{2,}$")) {
+            } else if (!password.getText().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d@$!%*?&]{8,}$")) {
 
-                message.setText("Enter a valid email address.");
+                message.setText("Enter a valid password.");
                 message.setTextFill(Color.RED);
 
             } else {
@@ -81,7 +77,6 @@ public class PatientLogin extends Application {
         VBox form = new VBox(13,
                 logo, title, subtitle,
                 new Label("Patient ID"), patientId,
-                new Label("Email Address"), email,
                 new Label("Password"), password,
                 message, login
         );
