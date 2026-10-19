@@ -3,14 +3,20 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class DatabaseConnection {
 
-    private static final String URL
-            = "jdbc:postgresql://aws-0-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=require";
+    private static final Dotenv dotenv = Dotenv.configure()
+        .directory(".")
+        .ignoreIfMissing()
+        .load();
+    private static final String URL =
+            "jdbc:postgresql://aws-0-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=require";
 
     public static Connection getConnection() throws SQLException {
-        String user = System.getenv("GLUCOSYNC_DB_USER");
-        String password = System.getenv("GLUCOSYNC_DB_PASSWORD");
+        String user = dotenv.get("GLUCOSYNC_DB_USER");
+        String password = dotenv.get("GLUCOSYNC_DB_PASSWORD");
 
         if (user == null || password == null) {
             throw new SQLException(

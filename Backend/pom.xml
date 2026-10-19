@@ -15,10 +15,18 @@
     </properties>
 
     <dependencies>
+        <!-- PostgreSQL JDBC Driver -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.8</version>
+        </dependency>
+
+        <!-- Load environment variables from .env -->
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>java-dotenv</artifactId>
+            <version>5.2.2</version>
         </dependency>
     </dependencies>
 
@@ -26,11 +34,13 @@
         <sourceDirectory>${project.basedir}</sourceDirectory>
 
         <plugins>
+            <!-- Java Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.1</version>
                 <configuration>
+                    <release>26</release>
                     <includes>
                         <include>DatabaseConnection.java</include>
                         <include>PatientDAO.java</include>
@@ -40,6 +50,7 @@
                 </configuration>
             </plugin>
 
+            <!-- Run Java main classes -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
