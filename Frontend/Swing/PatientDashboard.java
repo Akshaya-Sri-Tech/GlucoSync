@@ -20,6 +20,9 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
+import java.math.BigDecimal;
+import java.sql.SQLException;
+
 public class PatientDashboard extends JFrame {
 
     private static final Color TEAL = new Color(8, 127, 140);
@@ -211,115 +214,138 @@ public class PatientDashboard extends JFrame {
         panel.add(Box.createRigidArea(new Dimension(0, height)));
     }
 
-    private void submitReadings() {
-        try {
-            preMeal.commitEdit();
-            postMeal.commitEdit();
+    
+private void submitReadings() {
+    try {
+        preMeal.commitEdit();
+        postMeal.commitEdit();
 
-            int pre = (Integer) preMeal.getValue();
-            int post = (Integer) postMeal.getValue();
+        int pre = (Integer) preMeal.getValue();
+        int post = (Integer) postMeal.getValue();
 
-            // Validate pre-meal glucose reading
-            if (pre < 0 || pre > 600) {
-                result.setForeground(Color.RED);
-                result.setText(
-                        "Invalid pre-meal value! Enter a value between 0 and 600 mg/dL."
-                );
-
-                JSpinner.DefaultEditor editor
-                        = (JSpinner.DefaultEditor) preMeal.getEditor();
-                editor.getTextField().requestFocusInWindow();
-                editor.getTextField().selectAll();
-                return;
-            }
-
-            // Validate post-meal glucose reading
-            if (post < 0 || post > 600) {
-                result.setForeground(Color.RED);
-                result.setText(
-                        "Invalid post-meal value! Enter a value between 0 and 600 mg/dL."
-                );
-
-                JSpinner.DefaultEditor editor
-                        = (JSpinner.DefaultEditor) postMeal.getEditor();
-                editor.getTextField().requestFocusInWindow();
-                editor.getTextField().selectAll();
-                return;
-            }
-
-            // Record submission date and time
-            LocalDateTime submittedAt = LocalDateTime.now();
-
-            DateTimeFormatter formatter
-                    = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm a");
-
-            dateTime.setText(
-                    "Recorded at: " + submittedAt.format(formatter)
-            );
-
-            // Classify the readings
-            String risk = classifyRisk(pre, post);
-
-            // Display a colour-coded risk flag
-            switch (risk) {
-                case "HIGH":
-                    riskFlag.setText("  HIGH RISK  ");
-                    riskFlag.setBackground(new Color(211, 47, 47));
-                    riskFlag.setForeground(Color.WHITE);
-
-                    riskDetails.setText(
-                            "A reading crossed the configured high threshold."
-                    );
-
-                    AlertNotification.showAlert();
-                    break;
-
-                case "LOW":
-                    riskFlag.setText("  LOW RISK  ");
-                    riskFlag.setBackground(new Color(255, 213, 79));
-                    riskFlag.setForeground(new Color(70, 50, 0));
-
-                    riskDetails.setText(
-                            "A reading fell below the configured low threshold."
-                    );
-                    break;
-
-                default:
-                    riskFlag.setText("  MODERATE  ");
-                    riskFlag.setBackground(new Color(46, 125, 50));
-                    riskFlag.setForeground(Color.WHITE);
-
-                    riskDetails.setText(
-                            "Both readings are within the example target ranges."
-                    );
-                    break;
-            }
-
-            result.setForeground(TEAL);
-            result.setText(
-                    "<html>Readings captured successfully!<br>"
-                    + "Patient ID: " + patientId + "<br>"
-                    + "Pre-meal: " + pre + " mg/dL<br>"
-                    + "Post-meal: " + post + " mg/dL<br>"
-                    + "Risk status: " + risk + "</html>"
-            );
-
-            // Later: save patientId, pre, post, submittedAt and risk to MySQL.
-        } catch (NumberFormatException
-                | java.text.ParseException ex) {
-
+        if (pre <= 0 || pre > 600) {
             result.setForeground(Color.RED);
             result.setText(
-                    "Please enter valid whole-number glucose readings between 0 and 600."
+                "Pre-meal reading must be between 1 and 600 mg/dL."
             );
-
-        } catch (IllegalArgumentException ex) {
-
-            result.setForeground(Color.RED);
-            result.setText(
-                    "Enter valid readings within the permitted range."
-            );
+            return;
         }
+
+        if (post <= 0 || post > 600) {
+            result.setForeground(Color.RED);
+            result.setText(
+                "Post-meal reading must be between 1 and 600 mg/dL."
+            );
+            return;
+        }
+
+        // Determine the database status for each reading.
+        String preStatus = getReadingStatus(pre, 130);
+        String postStatus = getReadingStatus(post, 180);
+
+        // Connect the GUI to the existing DAO.
+        GlucoseDAO glucoseDAO = new GlucoseDAO();
+
+        long preReadingId = glucoseDAO.addGlucoseReading(
+            patientId,
+            BigDecimal.valueOf(pre),
+            preStatus,
+            "Pre-meal"
+        );
+
+        long postReadingId = glucoseDAO.addGlucoseReading(
+            patientId,
+            BigDecimal.valueOf(post),
+            postStatus,
+            "Post-meal"
+        );
+
+        // Both DAO calls succeeded.
+        LocalDateTime submittedAt = LocalDateTime.now();
+
+        DateTimeFormatter formatter =
+            DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm a");
+
+        dateTime.setText(
+            "Recorded at: " + submittedAt.format(formatter)
+        );
+
+        String risk = classifyRisk(pre, post);
+
+        switch (risk) {
+            case "HIGH":
+                riskFlag.setText("  HIGH RISK  ");
+                riskFlag.setBackground(new Color(211, 47, 47));
+                riskFlag.setForeground(Color.WHITE);
+                riskDetails.setText(
+                    "A reading crossed the configured high threshold."
+                );
+                AlertNotification.showAlert();
+                break;
+
+            case "LOW":
+                riskFlag.setText("  LOW RISK  ");
+                riskFlag.setBackground(new Color(255, 213, 79));
+                riskFlag.setForeground(new Color(70, 50, 0));
+                riskDetails.setText(
+                    "A reading fell below the configured low threshold."
+                );
+                break;
+
+            default:
+                riskFlag.setText("  MODERATE  ");
+                riskFlag.setBackground(new Color(46, 125, 50));
+                riskFlag.setForeground(Color.WHITE);
+                riskDetails.setText(
+                    "Both readings are within the example target ranges."
+                );
+                break;
+        }
+
+        result.setForeground(TEAL);
+        result.setText(
+            "<html>Readings saved successfully!<br>"
+            + "Patient ID: " + patientId + "<br>"
+            + "Pre-meal: " + pre + " mg/dL<br>"
+            + "Post-meal: " + post + " mg/dL<br>"
+            + "Reading IDs: " + preReadingId + ", "
+            + postReadingId + "<br>"
+            + "Risk status: " + risk + "</html>"
+        );
+
+    } catch (NumberFormatException
+            | java.text.ParseException ex) {
+
+        result.setForeground(Color.RED);
+        result.setText("Please enter valid whole-number readings.");
+
+    } catch (IllegalArgumentException ex) {
+
+        result.setForeground(Color.RED);
+        result.setText("Invalid glucose reading: " + ex.getMessage());
+
+    } catch (SQLException ex) {
+
+        result.setForeground(Color.RED);
+        result.setText(
+            "Could not save readings. Check the database connection."
+        );
+
+        ex.printStackTrace();
     }
+}
+
+private String getReadingStatus(int value, int highThreshold) {
+    if (value < 70) {
+        return "Low";
+    }
+
+    if (value > highThreshold) {
+        return "High";
+    }
+
+    return "Normal";
+}
+
 
 }
