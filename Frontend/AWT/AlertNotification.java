@@ -10,12 +10,12 @@ import java.awt.event.WindowEvent;
 
 public class AlertNotification extends Frame {
 
-    Label title, glucose, warning;
+    Label title, warning;
     Button close;
 
-    AlertNotification(double sugarLevel, double threshold) {
+    AlertNotification() {
         setTitle("GlucoSync - Alert Notification");
-        setSize(400, 250);
+        setSize(400, 200);
         setLayout(new GridLayout(4, 1, 10, 10));
         setBackground(Color.WHITE);
 
@@ -23,23 +23,20 @@ public class AlertNotification extends Frame {
         title.setFont(new Font("Arial", Font.BOLD, 16));
         title.setForeground(Color.RED);
 
-        glucose = new Label("Sugar Level: " + sugarLevel + " mg/dL", Label.CENTER);
-        glucose.setFont(new Font("Arial", Font.BOLD, 14));
-
         warning = new Label("WARNING: Threshold exceeded!", Label.CENTER);
         warning.setForeground(Color.RED);
         warning.setFont(new Font("Arial", Font.BOLD, 14));
 
-        close = new Button("Acknowledge Alert");
+        close = new Button("Book Appointment");
 
         add(title);
-        add(glucose);
         add(warning);
         add(close);
 
         close.addActionListener(e -> dispose());
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 dispose();
             }
@@ -50,13 +47,6 @@ public class AlertNotification extends Frame {
     }
 
     public static void main(String[] args) {
-        double sugarLevel = 250;
-        double threshold = 180;
-
-        if (sugarLevel > threshold) {
-            EventQueue.invokeLater(() ->
-                new AlertNotification(sugarLevel, threshold)
-            );
-        }
+            EventQueue.invokeLater(() -> new AlertNotification());
     }
 }
