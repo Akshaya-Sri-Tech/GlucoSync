@@ -1,3 +1,4 @@
+
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -46,7 +47,7 @@ public class AlertNotification extends Frame {
         setVisible(true);
     }
 
-    public static void main(String[] args) {
-            EventQueue.invokeLater(() -> new AlertNotification());
+    public static void showAlert() {
+        EventQueue.invokeLater(() -> new AlertNotification());
     }
 }
