@@ -120,6 +120,8 @@ public class DoctorLogin extends JFrame {
         root.add(card);
 
         add(root);
+
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     private void addField(

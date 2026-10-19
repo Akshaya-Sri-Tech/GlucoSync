@@ -121,6 +121,7 @@ public class PatientLogin extends JFrame {
 
         root.add(form);
         setContentPane(root);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     private void styleInput(JTextField field) {
@@ -133,6 +134,7 @@ public class PatientLogin extends JFrame {
                 new EmptyBorder(8, 10, 8, 10)
         ));
         field.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
     }
 
     private void addField(JPanel panel, String text, JTextField field) {

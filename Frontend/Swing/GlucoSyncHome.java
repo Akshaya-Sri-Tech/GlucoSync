@@ -19,10 +19,10 @@ import javax.swing.SwingUtilities;
 
 public class GlucoSyncHome extends JFrame {
 
-    private final Color pink = new Color(235, 75, 130);
-    private final Color darkPink = new Color(145, 35, 80);
-    private final Color lightPink = new Color(255, 235, 243);
-    private final Color whitePink = new Color(255, 248, 251);
+    private final Color pink = new Color(141, 110, 99);       // Medium brown
+    private final Color darkPink = new Color(93, 64, 55);     // Dark brown
+    private final Color lightPink = new Color(239, 235, 233); // Light beige
+    private final Color whitePink = new Color(250, 247, 242); // Cream
 
     public GlucoSyncHome() {
         setTitle("GlucoSync");
@@ -125,8 +125,6 @@ public class GlucoSyncHome extends JFrame {
         } else if (role.equals("Patient")) {
             new PatientLogin().setVisible(true);
         }
-
-        this.dispose(); // Close the home page
     }
 
     public static void main(String[] args) {
