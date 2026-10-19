@@ -1,11 +1,12 @@
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
 
-    private static final String URL =
-            "jdbc:postgresql://aws-0-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=require";
+    private static final String URL
+            = "jdbc:postgresql://aws-0-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=require";
 
     public static Connection getConnection() throws SQLException {
         String user = System.getenv("GLUCOSYNC_DB_USER");
@@ -13,7 +14,7 @@ public class DatabaseConnection {
 
         if (user == null || password == null) {
             throw new SQLException(
-                "Set GLUCOSYNC_DB_USER and GLUCOSYNC_DB_PASSWORD first."
+                    "Set GLUCOSYNC_DB_USER and GLUCOSYNC_DB_PASSWORD first."
             );
         }
 
