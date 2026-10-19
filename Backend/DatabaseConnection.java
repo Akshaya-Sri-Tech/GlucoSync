@@ -8,15 +8,16 @@ import io.github.cdimascio.dotenv.Dotenv;
 public class DatabaseConnection {
 
     private static final Dotenv dotenv = Dotenv.configure()
-        .directory(".")
-        .ignoreIfMissing()
-        .load();
-    private static final String URL =
-            "jdbc:postgresql://aws-0-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=require";
+            .directory("C:/java_project/GlucoSync/Backend")
+            .ignoreIfMissing()
+            .load();
+    private static final String URL
+            = "jdbc:postgresql://aws-0-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=require";
 
     public static Connection getConnection() throws SQLException {
         String user = dotenv.get("GLUCOSYNC_DB_USER");
         String password = dotenv.get("GLUCOSYNC_DB_PASSWORD");
+        
 
         if (user == null || password == null) {
             throw new SQLException(
