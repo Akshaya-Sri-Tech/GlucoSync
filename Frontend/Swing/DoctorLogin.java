@@ -43,7 +43,7 @@ public class DoctorLogin extends JFrame {
         title.setFont(new Font("Arial", Font.BOLD, 23));
 
         JLabel subtitle = new JLabel(
-            "Welcome back! Manage your patients."
+                "Welcome back! Manage your patients."
         );
         subtitle.setForeground(Color.GRAY);
 
@@ -68,7 +68,7 @@ public class DoctorLogin extends JFrame {
         login.setOpaque(true);
         login.setBorderPainted(false);
         login.setCursor(
-            Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+                Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
         );
 
         login.addActionListener(e -> validateLogin());
@@ -102,15 +102,15 @@ public class DoctorLogin extends JFrame {
         headingPanel.add(subtitle);
         headingPanel.add(Box.createVerticalStrut(20));
 
-        form.add(headingPanel,0);
+        form.add(headingPanel, 0);
 
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(
-                new Color(230, 225, 240)
-            ),
-            BorderFactory.createEmptyBorder(5, 5, 5, 5)
+                BorderFactory.createLineBorder(
+                        new Color(230, 225, 240)
+                ),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
         ));
         card.add(form);
 
@@ -123,7 +123,7 @@ public class DoctorLogin extends JFrame {
     }
 
     private void addField(
-        JPanel form, String labelText, JComponent field
+            JPanel form, String labelText, JComponent field
     ) {
         JLabel label = new JLabel(labelText);
         label.setFont(new Font("Arial", Font.BOLD, 13));
@@ -147,11 +147,11 @@ public class DoctorLogin extends JFrame {
         } else if (!id.matches("\\d+")) {
             showMessage("Doctor ID must contain digits only.", false);
         } else if (!pass.matches(
-            "\\d+"
+                "\\d+"
         )) {
             showMessage(
-                "Password must be 8+ characters with uppercase, lowercase and a digit.",
-                false
+                    "Enter a valid password.",
+                    false
             );
         } else {
             DoctorDashboard dashboard
@@ -167,7 +167,7 @@ public class DoctorLogin extends JFrame {
     private void showMessage(String text, boolean success) {
         message.setText(text);
         message.setForeground(
-            success ? PURPLE : Color.RED
+                success ? PURPLE : Color.RED
         );
     }
 

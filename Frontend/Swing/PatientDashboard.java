@@ -271,7 +271,7 @@ public class PatientDashboard extends JFrame {
                             "A reading crossed the configured high threshold."
                     );
 
-                    new AlertNotification().setVisible(true);
+                    AlertNotification.showAlert();
                     break;
 
                 case "LOW":
