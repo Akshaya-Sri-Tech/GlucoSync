@@ -36,7 +36,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 public class DoctorDashboard extends JFrame {
@@ -68,7 +67,7 @@ public class DoctorDashboard extends JFrame {
         "04:00 PM"
     };
 
-    public DoctorDashboard() {
+    public DoctorDashboard(int DocId) {
         setTitle("GlucoSync - Doctor Dashboard");
         setSize(1000, 760);
         setMinimumSize(new Dimension(850, 650));
@@ -595,12 +594,5 @@ public class DoctorDashboard extends JFrame {
             daysPanel.revalidate();
             daysPanel.repaint();
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            DoctorDashboard dashboard = new DoctorDashboard();
-            dashboard.setVisible(true);
-        });
     }
 }

@@ -1,3 +1,4 @@
+
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -7,6 +8,8 @@ import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
+
 
 public class AlertNotification extends Frame {
 
@@ -33,7 +36,7 @@ public class AlertNotification extends Frame {
         add(warning);
         add(close);
 
-        close.addActionListener(e -> dispose());
+        close.addActionListener(e -> { new AppointmentBooking().setVisible(true); dispose(); });
 
         addWindowListener(new WindowAdapter() {
             @Override

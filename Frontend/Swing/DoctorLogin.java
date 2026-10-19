@@ -154,7 +154,13 @@ public class DoctorLogin extends JFrame {
                 false
             );
         } else {
-            showMessage("Login details validated!", true);
+            DoctorDashboard dashboard
+                    = new DoctorDashboard(Integer.parseInt(id));
+
+            dashboard.setVisible(true);
+
+            // Close the login window
+            this.dispose();
         }
     }
 

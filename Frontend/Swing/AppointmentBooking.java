@@ -1,3 +1,4 @@
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -180,6 +181,7 @@ public class AppointmentBooking extends JFrame {
             @Override
             public void mouseExited(MouseEvent e) {
                 bookButton.setBackground(TEAL);
+                dispose();
             }
         });
 
@@ -229,5 +231,6 @@ public class AppointmentBooking extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() ->
                 new AppointmentBooking().setVisible(true));
+
     }
 }

@@ -160,9 +160,8 @@ public class PatientLogin extends JFrame {
         } else if (!id.matches("\\d+")) {
             showMessage("Enter a valid Patient ID.", Color.RED);
 
-        } else if (!pass.matches(
-                "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)"
-                + "[a-zA-Z\\d@$!%*?&]{8,}$")) {
+        } else if (!pass.matches("\\d+")
+               ) {
             showMessage("Enter a valid password.", Color.RED);
 
         } else {
