@@ -147,7 +147,7 @@ public class PatientDashboard extends JFrame {
 
         card.add(dateTime);
         addGap(card, 22);
-    
+
         card.add(submit);
         addGap(card, 18);
         card.add(riskFlag);
@@ -248,6 +248,8 @@ public class PatientDashboard extends JFrame {
                     riskDetails.setText(
                             "A reading crossed the configured high threshold."
                     );
+                    AlertNotification.showAlert();
+
                     break;
 
                 case "LOW":
