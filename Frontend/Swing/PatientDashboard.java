@@ -324,7 +324,7 @@ public class PatientDashboard extends JFrame {
                     riskDetails.setText(
                             "A reading crossed the configured high threshold."
                     );
-                    AlertNotification.showAlert();
+                    AlertNotification.showAlert(patientId);
                     break;
 
                 case "LOW":

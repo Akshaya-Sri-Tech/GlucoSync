@@ -56,8 +56,6 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>${project.basedir}</sourceDirectory>
-
         <plugins>
             <!-- Java Compiler -->
             <plugin>
@@ -65,14 +63,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.1</version>
                 <configuration>
-                    <release>26</release>
-                    <includes>
-                        <include>DatabaseConnection.java</include>
-                        <include>PatientDAO.java</include>
-                        <include>GlucoseDAO.java</include>
-                        <include>AppointmentDAO.java</include>
-                        <include>src/**/*.java</include>
-                    </includes>
+                    <release>${maven.compiler.release}</release>
                 </configuration>
             </plugin>
 

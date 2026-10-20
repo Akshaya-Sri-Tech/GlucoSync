@@ -1,6 +1,7 @@
 package com.glucosync.dao;
 
 import com.glucosync.dao.DatabaseConnection;
+import org.springframework.stereotype.Repository;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -10,6 +11,7 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class AppointmentDAO {
 
     // Represents an available doctor slot

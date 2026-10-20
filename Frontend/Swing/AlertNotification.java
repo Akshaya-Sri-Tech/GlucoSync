@@ -16,7 +16,7 @@ public class AlertNotification extends Frame {
     Label title, warning;
     Button close;
 
-    AlertNotification() {
+    AlertNotification(long patientId) {
         setTitle("GlucoSync - Alert Notification");
         setSize(400, 200);
         setLayout(new GridLayout(4, 1, 10, 10));
@@ -36,7 +36,10 @@ public class AlertNotification extends Frame {
         add(warning);
         add(close);
 
-        close.addActionListener(e -> { new AppointmentBooking().setVisible(true); dispose(); });
+        close.addActionListener(e -> {
+            new AppointmentBooking(patientId).setVisible(true);
+            dispose();
+        });
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -49,7 +52,7 @@ public class AlertNotification extends Frame {
         setVisible(true);
     }
 
-    public static void showAlert() {
-        EventQueue.invokeLater(() -> new AlertNotification());
+    public static void showAlert(long patientId) {
+        EventQueue.invokeLater(() -> new AlertNotification(patientId));
     }
 }

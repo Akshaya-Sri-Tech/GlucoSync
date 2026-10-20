@@ -11,12 +11,20 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -40,6 +48,11 @@ import javax.swing.border.EmptyBorder;
 
 public class DoctorDashboard extends JFrame {
 
+    private static final String API_BASE = "http://localhost:8080/api";
+    private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
+    private static final DateTimeFormatter UI_TIME =
+            DateTimeFormatter.ofPattern("hh:mm a");
+
     private final Color PURPLE = new Color(92, 65, 180);
     private final Color LIGHT_BG = new Color(246, 247, 251);
     private final Color TEXT = new Color(45, 45, 60);
@@ -60,6 +73,7 @@ public class DoctorDashboard extends JFrame {
 
     private LocalDate selectedDate = LocalDate.now();
     private final Set<String> bookedSlots = new HashSet<>();
+    private final int doctorId;
 
     private final String[] TIMES = {
         "09:00 AM", "10:00 AM", "11:00 AM",
@@ -68,6 +82,7 @@ public class DoctorDashboard extends JFrame {
     };
 
     public DoctorDashboard(int DocId) {
+        this.doctorId = DocId;
         setTitle("GlucoSync - Doctor Dashboard");
         setSize(1000, 760);
         setMinimumSize(new Dimension(850, 650));
@@ -276,6 +291,27 @@ public class DoctorDashboard extends JFrame {
         String diabetesType = type1Button.isSelected()
                 ? "Type 1 Diabetes" : "Type 2 Diabetes";
 
+        String requestJson = String.format(
+                "{\"name\":\"%s\",\"age\":%d,\"diabetesType\":\"%s\","
+                + "\"minGlucose\":%d,\"maxGlucose\":%d}",
+                escapeJson(name), age, diabetesType, minGlucose, maxGlucose);
+        try {
+            HttpResponse<String> response = sendJson(
+                    API_BASE + "/patients/register", "POST", requestJson);
+            if (response.statusCode() != 201) {
+                showMessage("Patient registration failed: "
+                        + responseError(response.body(), response.statusCode()));
+                return;
+            }
+        } catch (IOException ex) {
+            showMessage("Cannot connect to the backend. Patient was not registered.");
+            return;
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            showMessage("Patient registration was interrupted.");
+            return;
+        }
+
         showMessage(
             "Patient registered successfully!\n\n" +
             "Name: " + name +
@@ -413,6 +449,13 @@ public class DoctorDashboard extends JFrame {
 
         String key = selectedDate + "|" + time;
 
+        for (int i = 0; i < slotModel.size(); i++) {
+            if (slotModel.get(i).startsWith(time)) {
+                showMessage("This slot already exists for the selected date.");
+                return;
+            }
+        }
+
         if (!bookedSlots.add(key)) {
             showMessage("This slot has already been added.");
             return;
@@ -427,16 +470,46 @@ public class DoctorDashboard extends JFrame {
             return;
         }
 
-        StringBuilder message =
-            new StringBuilder("Appointment slots submitted:\n\n");
-
+        Set<LocalTime> times = new HashSet<>();
         for (String slot : bookedSlots) {
             String[] parts = slot.split("\\|");
-            message.append(parts[0]).append(" - ")
-                   .append(parts[1]).append("\n");
+            if (parts[0].equals(selectedDate.toString())) {
+                times.add(LocalTime.parse(parts[1], UI_TIME));
+            }
+        }
+        if (times.isEmpty()) {
+            showMessage("No new slots are queued for the selected date.");
+            return;
         }
 
-        showMessage(message.toString());
+        StringBuilder json = new StringBuilder("{\"date\":\"")
+                .append(selectedDate).append("\",\"startTimes\":[");
+        boolean first = true;
+        for (LocalTime time : times) {
+            if (!first) json.append(',');
+            json.append('"').append(time).append('"');
+            first = false;
+        }
+        json.append("]}");
+
+        try {
+            HttpResponse<String> response = sendJson(
+                    API_BASE + "/doctors/" + doctorId + "/slots",
+                    "POST", json.toString());
+            if (response.statusCode() != 201) {
+                showMessage("Slot submission failed: "
+                        + responseError(response.body(), response.statusCode()));
+                return;
+            }
+            bookedSlots.removeIf(slot -> slot.startsWith(selectedDate + "|"));
+            refreshSlots();
+            showMessage("Appointment slots saved successfully.");
+        } catch (IOException ex) {
+            showMessage("Cannot connect to the backend. Slots were not saved.");
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            showMessage("Slot submission was interrupted.");
+        }
     }
 
     private void refreshSlots() {
@@ -450,6 +523,69 @@ public class DoctorDashboard extends JFrame {
                 slotModel.addElement(parts[1]);
             }
         }
+
+        Set<String> displayed = new HashSet<>();
+        for (int i = 0; i < slotModel.size(); i++) {
+            displayed.add(slotModel.get(i));
+        }
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(API_BASE + "/doctors/" + doctorId
+                            + "/slots?date=" + selectedDate))
+                    .GET().build();
+            HttpResponse<String> response = HTTP_CLIENT.send(request,
+                    HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                showMessage("Unable to load doctor slots: "
+                        + responseError(response.body(), response.statusCode()));
+                return;
+            }
+            Matcher objects = Pattern.compile("\\{[^{}]*\\}")
+                    .matcher(response.body());
+            while (objects.find()) {
+                String object = objects.group();
+                Matcher time = Pattern.compile("\\\"startTime\\\"\\s*:\\s*\\\"(\\d{2}:\\d{2})")
+                        .matcher(object);
+                Matcher available = Pattern.compile("\\\"available\\\"\\s*:\\s*(true|false)")
+                        .matcher(object);
+                if (time.find()) {
+                    String value = LocalTime.parse(time.group(1)).format(UI_TIME);
+                    if (displayed.add(value)) {
+                        slotModel.addElement(value + (available.find()
+                                && !"true".equals(available.group(1))
+                                ? " (Booked)" : ""));
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            showMessage("Cannot connect to the backend. Doctor slots were not loaded.");
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            showMessage("Loading doctor slots was interrupted.");
+        } catch (RuntimeException ex) {
+            showMessage("Unable to read doctor slots from the backend.");
+        }
+    }
+
+    private HttpResponse<String> sendJson(String url, String method, String json)
+            throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .method(method, HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        return HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private String responseError(String body, int statusCode) {
+        Matcher matcher = Pattern.compile("\\\"error\\\"\\s*:\\s*\\\"([^\\\"]+)\\\"")
+                .matcher(body);
+        return matcher.find() ? matcher.group(1) : "HTTP " + statusCode;
+    }
+
+    private String escapeJson(String value) {
+        return value.replace("\\", "\\\\").replace("\"", "\\\"")
+                .replace("\n", "\\n").replace("\r", "\\r");
     }
 
     private JPanel createCard() {

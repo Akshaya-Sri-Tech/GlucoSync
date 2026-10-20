@@ -9,9 +9,6 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 public class DatabaseConnection {
 
-    private static final String URL =
-            "jdbc:postgresql://aws-0-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=require";
-
     private static final Dotenv dotenv = loadDotenv();
 
     private static Dotenv loadDotenv() {
@@ -50,18 +47,21 @@ public class DatabaseConnection {
     }
 
     public static Connection getConnection() throws SQLException {
+        String url = getConfig("GLUCOSYNC_DB_URL");
         String user = getConfig("GLUCOSYNC_DB_USER");
         String password = getConfig("GLUCOSYNC_DB_PASSWORD");
 
-        if (user == null || user.isBlank()
+        if (url == null || url.isBlank()
+                || user == null || user.isBlank()
                 || password == null || password.isBlank()) {
             throw new SQLException(
-                    "Missing GLUCOSYNC_DB_USER or GLUCOSYNC_DB_PASSWORD. "
-                    + "Set environment variables or configure Backend/.env."
+                    "Missing GLUCOSYNC_DB_URL, GLUCOSYNC_DB_USER, or "
+                    + "GLUCOSYNC_DB_PASSWORD. Set environment variables or "
+                    + "configure Backend/.env."
             );
         }
 
-        return DriverManager.getConnection(URL, user, password);
+        return DriverManager.getConnection(url, user, password);
     }
 
     public static void main(String[] args) {
