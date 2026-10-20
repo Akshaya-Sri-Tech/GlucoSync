@@ -1,4 +1,5 @@
-
+package com.glucosync.dao;
+import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class PatientDAO {
 
     // Represents a patient record from the database

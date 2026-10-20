@@ -1,3 +1,5 @@
+package com.glucosync.dao;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class GlucoseDAO {
 
     // Represents one row from glucose_readings

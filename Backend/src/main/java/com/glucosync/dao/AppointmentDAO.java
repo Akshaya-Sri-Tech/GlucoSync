@@ -1,3 +1,6 @@
+package com.glucosync.dao;
+
+import com.glucosync.dao.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
