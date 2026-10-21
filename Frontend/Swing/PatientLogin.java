@@ -30,7 +30,7 @@ public class PatientLogin extends JFrame {
 
     public PatientLogin() {
         setTitle("GlucoSync | Patient Login");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(650, 600);
         setMinimumSize(new Dimension(500, 500));
         setLocationRelativeTo(null);

@@ -51,7 +51,7 @@ public class DoctorDashboard extends JFrame {
     private static final String API_BASE = "http://localhost:8080/api";
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
     private static final DateTimeFormatter UI_TIME =
-            DateTimeFormatter.ofPattern("hh:mm a");
+            DateTimeFormatter.ofPattern("hh:mm a", java.util.Locale.ENGLISH);
 
     private final Color PURPLE = new Color(92, 65, 180);
     private final Color LIGHT_BG = new Color(246, 247, 251);
@@ -86,7 +86,7 @@ public class DoctorDashboard extends JFrame {
         setTitle("GlucoSync - Doctor Dashboard");
         setSize(1000, 760);
         setMinimumSize(new Dimension(850, 650));
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         getContentPane().setBackground(LIGHT_BG);
@@ -474,7 +474,7 @@ public class DoctorDashboard extends JFrame {
         for (String slot : bookedSlots) {
             String[] parts = slot.split("\\|");
             if (parts[0].equals(selectedDate.toString())) {
-                times.add(LocalTime.parse(parts[1], UI_TIME));
+                times.add(LocalTime.parse(parts[1].trim(), UI_TIME));
             }
         }
         if (times.isEmpty()) {

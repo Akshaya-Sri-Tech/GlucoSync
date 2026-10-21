@@ -37,8 +37,8 @@ public class AlertNotification extends Frame {
         add(close);
 
         close.addActionListener(e -> {
-            new AppointmentBooking(patientId).setVisible(true);
             dispose();
+            new AppointmentBooking(patientId).setVisible(true);
         });
 
         addWindowListener(new WindowAdapter() {

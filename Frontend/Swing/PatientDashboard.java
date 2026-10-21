@@ -5,8 +5,15 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -19,14 +26,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class PatientDashboard extends JFrame {
 
@@ -48,7 +47,7 @@ public class PatientDashboard extends JFrame {
     public PatientDashboard(int patientId) {
         this.patientId = patientId;
         setTitle("GlucoSync | Patient Dashboard");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(820, 800);
         setMinimumSize(new Dimension(650, 700));
         setLocationRelativeTo(null);
@@ -186,22 +185,53 @@ public class PatientDashboard extends JFrame {
         return spinner;
     }
 
+    
     private String classifyRisk(int pre, int post) {
-        // Placeholder thresholds for testing the application.
-        boolean high = pre > 130 || post > 180;
-        boolean low = pre < 70 || post < 70;
 
-        // High takes priority if either reading is high.
-        if (high) {
-            return "HIGH";
+    HttpClient client = HttpClient.newHttpClient();
+
+    String json = """
+            {"patientId": %d}
+            """.formatted(patientId);
+
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(
+                    "http://localhost:8080/api/analysis/classify"
+            ))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(json))
+            .build();
+
+    try {
+        HttpResponse<String> response = client.send(
+                request,
+                HttpResponse.BodyHandlers.ofString()
+        );
+
+        if (response.statusCode() == 200) {
+            Matcher matcher = Pattern.compile(
+                    "\"risk\"\\s*:\\s*\"([^\"]+)\""
+            ).matcher(response.body());
+
+            if (matcher.find()) {
+                return matcher.group(1);
+            }
         }
 
-        if (low) {
-            return "LOW";
-        }
+        System.err.println(
+                "Risk API failed: HTTP " + response.statusCode()
+        );
 
-        return "MODERATE";
+    } catch (IOException e) {
+        e.printStackTrace();
+
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
     }
+
+    return "UNKNOWN";
+}
+
 
     private void addField(JPanel panel, String labelText,
             JComponent input) {
@@ -322,7 +352,7 @@ public class PatientDashboard extends JFrame {
                     riskFlag.setBackground(new Color(211, 47, 47));
                     riskFlag.setForeground(Color.WHITE);
                     riskDetails.setText(
-                            "A reading crossed the configured high threshold."
+                        "Last Three Days Records Analysed. Readings are abnormal."
                     );
                     AlertNotification.showAlert(patientId);
                     break;
@@ -332,7 +362,7 @@ public class PatientDashboard extends JFrame {
                     riskFlag.setBackground(new Color(255, 213, 79));
                     riskFlag.setForeground(new Color(70, 50, 0));
                     riskDetails.setText(
-                            "A reading fell below the configured low threshold."
+                        "Last Three Days Records Analysed. The Readings are below the configured low threshold."
                     );
                     break;
 
@@ -341,7 +371,7 @@ public class PatientDashboard extends JFrame {
                     riskFlag.setBackground(new Color(46, 125, 50));
                     riskFlag.setForeground(Color.WHITE);
                     riskDetails.setText(
-                            "Both readings are within the example target ranges."
+                        "Last Three Days Records Analysed. Readings are within the example target ranges."
                     );
                     break;
             }

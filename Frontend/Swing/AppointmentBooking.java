@@ -6,6 +6,15 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -20,16 +29,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class AppointmentBooking extends JFrame {
 
@@ -73,7 +72,7 @@ public class AppointmentBooking extends JFrame {
         setTitle("GlucoSync | Appointment Booking");
         setSize(650, 620);
         setMinimumSize(new Dimension(550, 520));
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
         JPanel root = new JPanel(new BorderLayout(0, 16));
@@ -149,7 +148,13 @@ public class AppointmentBooking extends JFrame {
             slotLabel.setFont(new Font("Arial", Font.BOLD, 10));
             slotLabel.setForeground(TEAL);
 
-            JLabel dateLabel = new JLabel("Date: " + slot.date());
+            String formattedDate = java.time.Instant.parse(slot.date())
+        .atZone(java.time.ZoneId.systemDefault())
+        .toLocalDate()
+        .format(java.time.format.DateTimeFormatter.ofPattern(
+                "dd MMM yyyy", java.util.Locale.ENGLISH));
+
+        JLabel dateLabel = new JLabel("Date: " + formattedDate);
             dateLabel.setFont(new Font("Arial", Font.BOLD, 13));
             dateLabel.setForeground(TEXT);
 
@@ -264,7 +269,6 @@ public class AppointmentBooking extends JFrame {
 
                         // Refresh the slots after a successful booking
                         dispose();
-                        new AppointmentBooking(patientId).setVisible(true);
 
                     } catch (IOException ex) {
 
