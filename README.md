@@ -221,6 +221,7 @@ The homepage's frontend API URL must point to the running backend. Keep Terminal
 
 -Additional validation and automated testing.
 
+
 ## 👥 Contributors
 Developed as a Java-based project focused on glucose monitoring and doctor appointment management.
 
