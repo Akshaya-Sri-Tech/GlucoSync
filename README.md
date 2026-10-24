@@ -1,68 +1,242 @@
 # GlucoSync 🩺
-### A Java-Based Glucose Monitoring and Doctor Appointment Management System
+### Java-Based Glucose Monitoring and Doctor Appointment Management System
 
-## 📌 Project Overview
+## 📌 Overview
 
-GlucoSync is a Java-based glucose monitoring system that connects patients and doctors through personalized glucose tracking, threshold-based alert notifications, and appointment management.
+GlucoSync is a Java-based application for glucose monitoring and doctor appointment management. Doctors register patients, configure patient-specific pre-meal and post-meal glucose thresholds, and enter available appointment slots. Patients sign in using their patient ID and password, record their glucose readings, and receive an alert when the latest three readings in either category exceed the configured maximum threshold.
 
-Doctors register patients, assign unique patient IDs, configure individual pre-meal and post-meal glucose thresholds, and provide available appointment slots. Patients log in using their patient ID and password to record their glucose readings.
+When an alert is triggered, the patient is prompted to book an available doctor appointment. The system books an available slot and displays a confirmation message.
 
-When a patient's last three pre-meal or post-meal readings exceed the corresponding configured threshold, the system triggers an alert and prompts the patient to book an available doctor appointment.
+## 🎯Key Features
 
-GlucoSync aims to support timely medical follow-up through automated glucose monitoring and appointment scheduling.
+### 👨‍⚕️Doctor
+- Register patients and assign patient IDs and login credentials.
+- Configure minimum and maximum glucose thresholds separately for pre-meal and post-meal readings.
+- Enter available appointment dates and times.
+- Manage doctor and patient information through the application.
 
-## 🎯 Key Features
+### 🧑‍💻Patient
+- Log in using a patient ID and password.
+- Submit pre-meal and post-meal glucose readings.
+- Store readings with their associated date and time.
+- Receive an alert when the latest three pre-meal readings **or** the latest three post-meal readings exceed the corresponding configured maximum threshold.
+- Book an available doctor appointment after an alert and receive a booking confirmation.
 
-### 👨‍⚕️ Doctor Module
-- **Patient Registration:** Register patients and generate unique patient IDs.
-- **Personalized Threshold Configuration:** Set minimum and maximum glucose thresholds separately for pre-meal and post-meal readings for each patient.
-- **Availability Management:** Enter available appointment slots with dates and timings.
-- **Patient Monitoring:** Configure patient-specific monitoring limits to support glucose tracking.
+> **Alert rule:** The described rule checks whether all three most recent readings in either category are above that category's maximum threshold. Confirm this wording against the implemented backend logic before publishing if the code uses a different condition.
 
-### 🧑‍💻 Patient Module
-- **Secure Login:** Log in using a doctor-assigned patient ID and password.
-- **Glucose Recording:** Enter pre-meal and post-meal glucose readings.
-- **Glucose History:** Maintain records of submitted glucose readings.
-- **Automated Alert Notifications:** Trigger an alert when the last three pre-meal or post-meal readings exceed the corresponding configured maximum threshold.
-- **Urgent Appointment Booking:** Prompt the patient to book an available doctor appointment after an alert.
-- **Appointment Confirmation:** Book an available doctor slot and display a confirmation message.
+## 🛠️ Technology Stack
 
-professional medical advice, diagnosis, or treatment. Glucose alerts are intended to support monitoring and follow-up and should not be used as the sole basis for medical decisions.
-🛠️ Technology Stack
+| Technology | Purpose |
+|---|---|
+| Java | Application and business logic |
+| Swing | Desktop screens and appointment-booking interface |
+| AWT | Alert notification interface |
+| Spring Boot | Backend application and REST API |
+| JDBC | Database connectivity |
+| PostgreSQL / Supabase | Database, if this matches the current `DatabaseConnection.java` configuration |
+| Maven | Dependency and build management |
+| Git and GitHub | Version control and collaboration |
 
-Technology
+Check `Backend/pom.xml` and `Backend/src/main/resources/application.properties` for the exact dependency and database configuration used by the current version.
 
-Purpose
+## 📂  Project Structure
 
-Java
+The following structure reflects the source folders and files visible in the repository.
 
-Application logic and business rules
+```text
+GlucoSync/
+├── Frontend/
+│   ├── AWT/
+│   │   └── AlertNotification.java
+│   │
+│   └── Swing/
+│       ├── src/
+│       ├── AlertNotification.java
+│       ├── AppointmentBooking.java
+│       ├── DoctorDashboard.java
+│       ├── DoctorLogin.java
+│       ├── GlucoSyncHome.java
+│       ├── PatientDashboard.java
+│       └── PatientLogin.java
+│
+├── Backend/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   └── com/
+│   │   │   │       └── glucosync/
+│   │   │   │           ├── controller/
+│   │   │   │           │   ├── AnalysisController.java
+│   │   │   │           │   ├── AppointmentController.java
+│   │   │   │           │   ├── DoctorController.java
+│   │   │   │           │   ├── GlucoseController.java
+│   │   │   │           │   └── PatientController.java
+│   │   │   │           │
+│   │   │   │           ├── dao/
+│   │   │   │           │   ├── AnalysisDAO.java
+│   │   │   │           │   ├── AppointmentDAO.java
+│   │   │   │           │   ├── DatabaseConnection.java
+│   │   │   │           │   ├── DoctorDAO.java
+│   │   │   │           │   ├── GlucoseDAO.java
+│   │   │   │           │   └── PatientDAO.java
+│   │   │   │           │
+│   │   │   │           └── GlucoSyncApplication.java
+│   │   │   │
+│   │   │   └── resources/
+│   │   │       └── application.properties
+│   │   │
+│   │   └── test/
+│   │       └── java/
+│   │
+│   ├── target/                 # Generated Maven build output
+│   ├── .env                    # Local secrets; do not commit
+│   └── pom.xml
+│
+├── Database/
+│   ├── sample-data.sql
+│   └── schema.sql
+│
+├── tools/
+│   └── apache-maven-3.10.0/    # Include only if this is intentionally tracked
+│
+├── .gitignore
+└── README.md
+```
+
+### 📂 Folder and file responsibilities
+
+- **`Frontend/AWT/`** — AWT-based alert notification window.
+- **`Frontend/Swing/`** — Swing desktop UI, including the home screen, patient and doctor login, dashboards, and appointment booking.
+- **`Backend/.../controller/`** — REST API controllers for patient, doctor, glucose, appointment, and analysis operations.
+- **`Backend/.../dao/`** — Database access classes and SQL operations.
+- **`GlucoSyncApplication.java`** — Spring Boot application entry point.
+- **`application.properties`** — Backend application configuration.
+- **`Backend/pom.xml`** — Backend Maven dependencies and build configuration.
+- **`Database/schema.sql`** — Database table definitions.
+- **`Database/sample-data.sql`** — Sample records for development or testing.
 
 
-Swing
+## 🔄 System Workflow
 
-Patient and Doctor Dashboard , Appointment booking interface
+1. The doctor registers a patient and assigns the patient's login details.
+2. The doctor configures the patient's pre-meal and post-meal minimum and maximum glucose thresholds.
+3. The doctor enters available appointment slots and timings.
+4. The patient logs in with their patient ID and password.
+5. The patient submits pre-meal and post-meal glucose readings.
+6. The backend compares the latest three readings in each category against the corresponding configured maximum threshold.
+7. If all three readings in either category exceed its maximum threshold, the application displays an alert.
+8. The patient books an available doctor slot.
+9. The application records the booking and displays a confirmation message.
 
-AWT
+## 🗄️Database
 
-Alert notification interface
+The `Database/` directory contains:
 
-Spring Boot
+- `schema.sql` — creates the database schema.
+- `sample-data.sql` — supplies sample data, if needed.
 
-Backend application and REST APIs
+The database connection and credentials should be configured according to `Backend/src/main/resources/application.properties`, `Backend/.../DatabaseConnection.java`, and the environment-variable loading used by the application.
 
-JDBC
+## ⚙️ Prerequisites
 
-Database connectivity
+- A JDK compatible with the Java version configured in `Backend/pom.xml`.
+- Apache Maven (the repository screenshot shows Maven 3.10.0 under `tools/`).
+- Access to the configured database.
+- Git, if cloning the repository.
+- Any required environment variables for the database connection.
 
-Supabase PostgreSQL
+## 🚀 Setup and Installation
 
-Persistent data storage
+### 1. Clone the repository
 
-Maven
+```bash
+git clone <your-github-repository-url>
+cd GlucoSync
+```
 
-Dependency management and build automation
+### 2. Configure the database
 
-Git and GitHub
+1. Create or access the database configured for the project.
+2. Run `Database/schema.sql`.
+3. Load `Database/sample-data.sql` if sample records are required.
+4. Configure the database URL, username, and password using the mechanism expected by the backend.
 
-Version control and collaboration
+### 3. Configure secrets safely
+
+If the backend uses `Backend/.env`, create that file locally with the variable names expected by the code. Do not publish real database credentials or commit the `.env` file. A sanitized `.env.example` with placeholder values may be provided for other developers.
+
+### 4. Build and run the backend
+
+From the repository root:
+
+```bash
+cd Backend
+mvn clean package
+```
+
+Start the application using the Spring Boot Maven plugin if it is configured in `Backend/pom.xml`:
+
+```bash
+mvn spring-boot:run
+```
+
+If Maven is not installed globally, use the Maven executable under `tools/apache-maven-3.10.0/bin/` with the appropriate command for your operating system.
+
+### 5. Compile and run the frontend
+
+**Start the backend before launching the frontend.** Keep the backend terminal open while using GlucoSync.
+
+#### Terminal 1 — Start the backend
+
+From the project root:
+Ensure that the SpringBoot backend is running.
+Wait until Spring Boot starts successfully before continuing. If the backend does not start, resolve the error before launching the frontend.
+
+#### Terminal 2 — Compile the frontend
+
+Open a second terminal at the project root (`GlucoSync`) and compile the Java files in the AWT and Swing folders:
+
+```powershell
+javac -d Frontend Frontend/AWT/*.java Frontend/Swing/*.java
+```
+
+#### Terminal 2 — Run the homepage
+
+After compilation succeeds, run only the GlucoSync homepage:
+
+```powershell
+java -cp Frontend GlucoSyncHome
+```
+
+The homepage's frontend API URL must point to the running backend. Keep Terminal 1 running while the application is in use.
+
+> These commands assume the frontend classes have no additional external dependencies and that `GlucoSyncHome` has a `main()` method. If compilation reports missing classes or libraries, adjust the compile command to include the required source files and classpath.
+
+## 🔐 Security Notes
+
+- Never commit `.env` files, passwords, API keys, or production credentials.
+- Use password hashing and appropriate authentication/authorization for patient and doctor accounts.
+- Use parameterized SQL queries for database operations.
+- Validate glucose readings and appointment requests on the backend.
+- Do not include real patient information in sample data, screenshots, or logs.
+
+## 🔮 Future Enhancements
+
+-Glucose trend visualization and reporting.
+
+-Improved appointment reminders.
+
+-Enhanced patient monitoring dashboards.
+
+-Additional validation and automated testing.
+
+## 👥 Contributors
+Developed as a Java-based project focused on glucose monitoring and doctor appointment management.
+-Akshaya Sri https://github.com/Akshaya-Sri-Tech
+-Amshita  https://github.com/amshita2647-star
+-Vishnu Priya https://github.com/vp-n-887
+-Aditi Renuprakash https://github.com/vp-n-887
+
+## Disclaimer
+
+GlucoSync is an educational software project. Its alerts are intended to support monitoring and follow-up and are not a substitute for professional medical advice, diagnosis, or treatment.
