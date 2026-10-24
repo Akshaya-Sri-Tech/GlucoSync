@@ -171,7 +171,7 @@ From the repository root:
 
 ```bash
 cd Backend
-mvn clean package
+mvn clean compile
 ```
 
 Start the application using the Spring Boot Maven plugin if it is configured in `Backend/pom.xml`:
