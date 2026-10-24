@@ -210,13 +210,6 @@ The homepage's frontend API URL must point to the running backend. Keep Terminal
 
 > These commands assume the frontend classes have no additional external dependencies and that `GlucoSyncHome` has a `main()` method. If compilation reports missing classes or libraries, adjust the compile command to include the required source files and classpath.
 
-## 🔐 Security Notes
-
-- Never commit `.env` files, passwords, API keys, or production credentials.
-- Use password hashing and appropriate authentication/authorization for patient and doctor accounts.
-- Use parameterized SQL queries for database operations.
-- Validate glucose readings and appointment requests on the backend.
-- Do not include real patient information in sample data, screenshots, or logs.
 
 ## 🔮 Future Enhancements
 
