@@ -3,9 +3,7 @@
 
 ## 📌 Overview
 
-GlucoSync is a Java-based application for glucose monitoring and doctor appointment management. Doctors register patients, configure patient-specific pre-meal and post-meal glucose thresholds, and enter available appointment slots. Patients sign in using their patient ID and password, record their glucose readings, and receive an alert when the latest three readings in either category exceed the configured maximum threshold.
-
-When an alert is triggered, the patient is prompted to book an available doctor appointment. The system books an available slot and displays a confirmation message.
+GlucoSync is a Java-based system that monitors glucose readings, alerts patients when thresholds are exceeded, and enables doctor appointment booking.
 
 ## 🎯Key Features
 
@@ -150,7 +148,7 @@ The database connection and credentials should be configured according to `Backe
 ### 1. Clone the repository
 
 ```bash
-git clone <your-github-repository-url>
+git clone https://github.com/Akshaya-Sri-Tech/GlucoSync
 cd GlucoSync
 ```
 
@@ -239,7 +237,7 @@ Developed as a Java-based project focused on glucose monitoring and doctor appoi
 
 - Vishnu Priya https://github.com/vp-n-887
 
-- Aditi Renuprakash https://github.com/vp-n-887
+- Aditi Renuprakash https://github.com/adit-codes
 
 ## Disclaimer
 
