@@ -37,6 +37,35 @@ GlucoSync is a Java-based system that monitors glucose readings, alerts patients
 
 Check `Backend/pom.xml` and `Backend/src/main/resources/application.properties` for the exact dependency and database configuration used by the current version.
 
+## 🔖JAVA Concepts Used
+
+| Concept | Where It Is Used |
+|---|---|
+| Classes and Objects | All Java files |
+| Constructors | Dashboard and UI classes |
+| Data Types and Variables | All Java files |
+| Operators and Expressions | Glucose risk analysis |
+| Control Flow Statements | Login and input validation |
+| Methods | All Java files |
+| Access Specifiers | Class members |
+| Static Members and Constants | UI styling and configuration |
+| `this` Keyword | Constructors and instance references |
+| String Class | Input validation and API responses |
+| Date and Time API | Glucose records and appointments |
+| Packages | Frontend and backend organization |
+| Inheritance | AWT and Swing windows |
+| Method Overriding | Event handling |
+| Nested and Inner Classes | Doctor calendar interface |
+| Exception Handling | API and input error handling |
+| Built-in Exceptions | Validation and network operations |
+| Lambda Expressions | GUI event handling |
+| JDBC | Database connectivity |
+| Spring Boot | Backend REST APIs and services |
+| HTTP Client and REST API | Frontend-backend communication |
+| AWT and Swing | Alert windows, login screens, and dashboards |
+| Layout Managers | UI component arrangement |
+| Event Handling | Button actions and user interactions |
+
 ## 📂  Project Structure
 
 The following structure reflects the source folders and files visible in the repository.
