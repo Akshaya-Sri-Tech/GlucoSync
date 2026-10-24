@@ -225,11 +225,11 @@ The homepage's frontend API URL must point to the running backend. Keep Terminal
 ## 👥 Contributors
 Developed as a Java-based project focused on glucose monitoring and doctor appointment management.
 
-- Akshaya Sri https://github.com/Akshaya-Sri-Tech
+- Akshaya Sri K R https://github.com/Akshaya-Sri-Tech
 
-- Amshita  https://github.com/amshita2647-star
+- Amshita N U https://github.com/amshita2647-star
 
-- Vishnu Priya https://github.com/vp-n-887
+- Vishnu Priya U https://github.com/vp-n-887
 
 - Aditi Renuprakash https://github.com/adit-codes
 
