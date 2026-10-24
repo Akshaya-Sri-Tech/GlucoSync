@@ -28,3 +28,41 @@ GlucoSync aims to support timely medical follow-up through automated glucose mon
 - **Appointment Confirmation:** Book an available doctor slot and display a confirmation message.
 
 professional medical advice, diagnosis, or treatment. Glucose alerts are intended to support monitoring and follow-up and should not be used as the sole basis for medical decisions.
+🛠️ Technology Stack
+
+Technology
+
+Purpose
+
+Java
+
+Application logic and business rules
+
+
+Swing
+
+Patient and Doctor Dashboard , Appointment booking interface
+
+AWT
+
+Alert notification interface
+
+Spring Boot
+
+Backend application and REST APIs
+
+JDBC
+
+Database connectivity
+
+Supabase PostgreSQL
+
+Persistent data storage
+
+Maven
+
+Dependency management and build automation
+
+Git and GitHub
+
+Version control and collaboration
